@@ -20,3 +20,4 @@ opencv-python-headless==4.5.3.56
 # Visualization and explanation
 matplotlib==3.4.2
 seaborn==0.11.1
+shap==0.39.0
