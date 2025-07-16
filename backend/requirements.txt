@@ -14,9 +14,9 @@ joblib==1.0.1
 
 # Image processing
 pillow==8.3.1
-tensorflow==2.4.1
-keras==2.4.3
-h5py==2.10.0
+tensorflow==2.5.0
+keras==2.6.0
+h5py==3.1.0
 opencv-python-headless==4.5.3.56
 
 # Visualization and explanation

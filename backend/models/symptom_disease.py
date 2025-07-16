@@ -21,14 +21,22 @@ class SymptomDiseaseModel(BaseModel):
         # Try to load pre-trained model and encoders
         if os.path.exists(self.model_path) and os.path.exists(self.label_encoders_path) and os.path.exists(self.unique_symptoms_path):
             try:
-                # Try to load the model with custom_objects to handle compatibility issues
+                # Try to load the model with multiple methods for TF 2.5.0 compatibility
                 try:
-                    self.model = load_model(self.model_path, compile=False)
+                    # First try direct loading with TF 2.5.0 method
+                    self.model = tf.keras.models.load_model(self.model_path, compile=False)
+                    print("Model loaded successfully with TF 2.5.0 method")
                 except Exception as model_error:
-                    print(f"Error loading model with standard method: {model_error}")
-                    # Create a fallback model with the same architecture
-                    self.model = self._create_fallback_model()
-                    print("Created fallback model for symptom-disease prediction")
+                    print(f"Error loading model with TF 2.5.0 method: {model_error}")
+                    try:
+                        # Try loading with custom objects
+                        self.model = load_model(self.model_path, compile=False)
+                        print("Model loaded successfully with custom objects")
+                    except Exception as custom_error:
+                        print(f"Error loading model with custom objects: {custom_error}")
+                        # Create a fallback model with the same architecture
+                        self.model = self._create_fallback_model()
+                        print("Created fallback model for symptom-disease prediction")
                 
                 # Load encoders and symptoms list
                 try:
