@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: diseaseX-backend
+    env: python
+    runtime: python3.9
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONUNBUFFERED
+        value: true
+      - key: PORT
+        value: 10000
+    healthCheckPath: /health
+    healthCheckTimeout: 300
+    initialDeployHook: python -c "import time; time.sleep(60)"
+    autoDeploy: false

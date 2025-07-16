@@ -1,0 +1,57 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Python backend
+/backend/venv/
+/backend/__pycache__/
+/backend/**/__pycache__/
+/backend/.env
+/backend/*.log
+
+# Large model files (if needed, add to Git LFS instead)
+/backend/trained_models/*.h5
+/backend/trained_models/*.pkl
+/backend/trained_models/*.joblib
+/backend/trained_models/*.bin
+
+# IDE files
+.idea/
+.vscode/
+
+/backend/datasets/
+
+
+# Datasets - exclude all datasets to reduce repository size
+backend/datasets/
+backend/datasets/**

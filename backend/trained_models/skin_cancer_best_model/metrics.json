@@ -1,0 +1,62 @@
+{
+    "model_name": "mobilenetv2",
+    "accuracy": 0.6372548937797546,
+    "loss": 1.6794984340667725,
+    "class_report": {
+        "Benign keratosis-like lesions": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 12.0
+        },
+        "Melanocytic nevi": {
+            "precision": 0.6372549019607843,
+            "recall": 1.0,
+            "f1-score": 0.7784431137724551,
+            "support": 65.0
+        },
+        "Dermatofibroma": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 2.0
+        },
+        "Melanoma": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 14.0
+        },
+        "Vascular lesions": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 1.0
+        },
+        "Basal cell carcinoma": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 4.0
+        },
+        "Actinic keratoses": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1-score": 0.0,
+            "support": 4.0
+        },
+        "accuracy": 0.6372549019607843,
+        "macro avg": {
+            "precision": 0.09103641456582633,
+            "recall": 0.14285714285714285,
+            "f1-score": 0.11120615911035073,
+            "support": 102.0
+        },
+        "weighted avg": {
+            "precision": 0.40609381007304884,
+            "recall": 0.6372549019607843,
+            "f1-score": 0.49606669014911353,
+            "support": 102.0
+        }
+    }
+}
