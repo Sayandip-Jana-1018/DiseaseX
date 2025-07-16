@@ -43,6 +43,24 @@ skin_cancer_model = SkinCancerModel()
 breast_cancer_model = BreastCancerModel()
 symptom_model = SymptomDiseaseModel()
 
+@app.route('/', methods=['GET'])
+def index():
+    """Root endpoint that returns API information"""
+    return jsonify({
+        "name": "DiseaseX Healthcare API",
+        "version": "1.0.0",
+        "status": "online",
+        "endpoints": {
+            "heart_disease": "/api/predict/heart",
+            "diabetes": "/api/predict/diabetes",
+            "liver_disease": "/api/predict/liver",
+            "skin_cancer": "/api/predict/skin-cancer",
+            "breast_cancer": "/api/predict/breast-cancer",
+            "symptom_disease": "/api/predict/symptom"
+        },
+        "documentation": "https://github.com/Sayandip-Jana/DiseaseX"
+    })
+
 @app.route('/api/predict/heart', methods=['POST'])
 def predict_heart():
     try:

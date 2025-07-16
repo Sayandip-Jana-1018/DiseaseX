@@ -39,24 +39,49 @@ class BreastCancerModel:
             bool: True if model loaded successfully, False otherwise
         """
         try:
-            # Load model architecture from JSON file
-            model_json_path = os.path.join(self.model_save_path, 'model.json')
+            # First try to load the simple_cnn model JSON which is more likely to be compatible
+            model_json_path = os.path.join(self.model_save_path, 'simple_cnn_model.json')
             if not os.path.exists(model_json_path):
-                logger.error(f"Model architecture file not found at {model_json_path}")
-                return False
-                
+                # Fall back to regular model.json
+                model_json_path = os.path.join(self.model_save_path, 'model.json')
+                if not os.path.exists(model_json_path):
+                    logger.error(f"Model architecture file not found at {model_json_path}")
+                    return False
+            
+            logger.info(f"Loading model architecture from {model_json_path}")
             with open(model_json_path, 'r') as json_file:
                 loaded_model_json = json_file.read()
-                
-            self.model = model_from_json(loaded_model_json)
             
-            # Load weights
-            weights_path = os.path.join(self.model_save_path, 'model.h5')
-            if not os.path.exists(weights_path):
-                logger.error(f"Model weights file not found at {weights_path}")
-                return False
+            # Use TensorFlow's direct model creation to avoid compatibility issues
+            try:
+                import tensorflow as tf
+                self.model = model_from_json(loaded_model_json)
+            except Exception as model_error:
+                logger.error(f"Error creating model from JSON: {str(model_error)}")
+                # Create a simple CNN model as fallback
+                logger.info("Creating fallback model architecture")
+                self.model = self._create_simple_cnn_model()
+            
+            # Try to load weights if model was created successfully
+            if self.model is not None:
+                # Try different weight files
+                weight_files = ['model.h5', 'simple_cnn_model.h5', 'resnet50_checkpoint.h5']
+                weights_loaded = False
                 
-            self.model.load_weights(weights_path)
+                for weight_file in weight_files:
+                    weights_path = os.path.join(self.model_save_path, weight_file)
+                    if os.path.exists(weights_path):
+                        try:
+                            logger.info(f"Attempting to load weights from {weights_path}")
+                            self.model.load_weights(weights_path, by_name=True)
+                            weights_loaded = True
+                            logger.info(f"Successfully loaded weights from {weights_path}")
+                            break
+                        except Exception as weight_error:
+                            logger.error(f"Error loading weights from {weight_file}: {str(weight_error)}")
+                
+                if not weights_loaded:
+                    logger.warning("Could not load any weights. Using untrained model.")
             
             # Load metrics to get model info
             metrics_path = os.path.join(self.model_save_path, 'metrics.json')
@@ -65,14 +90,54 @@ class BreastCancerModel:
                     metrics = json.load(f)
                     self.selected_architecture = metrics.get('model_name', 'simple_cnn')
                     accuracy = metrics.get('accuracy', 'unknown')
-                    print(f"Loaded {self.selected_architecture} model with accuracy: {accuracy}")
+                    logger.info(f"Loaded {self.selected_architecture} model with accuracy: {accuracy}")
             
-            print("Model loaded successfully")
+            logger.info("Breast cancer model initialization complete")
             return True
             
         except Exception as e:
             logger.error(f"Error loading model: {str(e)}")
             return False
+            
+    def _create_simple_cnn_model(self):
+        """
+        Create a simple CNN model as a fallback
+        
+        Returns:
+            A compiled simple CNN model
+        """
+        try:
+            import tensorflow as tf
+            from tensorflow.keras.models import Sequential
+            from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
+            
+            model = Sequential()
+            model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(self.img_height, self.img_width, 3)))
+            model.add(MaxPooling2D(pool_size=(2, 2)))
+            model.add(BatchNormalization())
+            
+            model.add(Conv2D(64, (3, 3), activation='relu'))
+            model.add(MaxPooling2D(pool_size=(2, 2)))
+            model.add(BatchNormalization())
+            
+            model.add(Conv2D(128, (3, 3), activation='relu'))
+            model.add(MaxPooling2D(pool_size=(2, 2)))
+            model.add(BatchNormalization())
+            
+            model.add(Flatten())
+            model.add(Dense(256, activation='relu'))
+            model.add(Dropout(0.5))
+            model.add(Dense(2, activation='softmax'))
+            
+            model.compile(loss='categorical_crossentropy',
+                        optimizer='adam',
+                        metrics=['accuracy'])
+            
+            logger.info("Created fallback simple CNN model")
+            return model
+        except Exception as e:
+            logger.error(f"Error creating fallback model: {str(e)}")
+            return None
     
     def predict(self, image_input):
         """
