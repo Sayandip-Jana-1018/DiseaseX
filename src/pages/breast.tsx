@@ -131,7 +131,7 @@ const BreastCancerPage: React.FC = () => {
             }}
           >
             {result ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left side - Results */}
                 <div className="flex flex-col w-full">
                   <div className="p-6 rounded-lg border-2 flex flex-col w-full h-full" 
@@ -142,7 +142,7 @@ const BreastCancerPage: React.FC = () => {
                     }}
                   >
                     {previewImage && (
-                      <div className="flex justify-center mb-6">
+                      <div className="flex justify-center -mb-32">
                         <div className="relative rounded-lg overflow-hidden w-full max-w-xs border-2" 
                           style={{ 
                             borderColor: `${accentColor}80`,
@@ -174,7 +174,7 @@ const BreastCancerPage: React.FC = () => {
                       diseaseType="breast"
                     />
                     
-                    <div className="flex justify-center mt-6">
+                    <div className="flex justify-center -mt-32">
                       <motion.button
                         onClick={() => {
                           setResult(null);

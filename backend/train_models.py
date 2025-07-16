@@ -4,6 +4,7 @@ import time
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+import json
 from models.heart_disease import HeartDiseaseModel
 from models.diabetes import DiabetesModel
 from models.liver_disease import LiverDiseaseModel
@@ -122,7 +123,7 @@ def train_skin_cancer_model(dataset_path=None, metadata_path=None, subset_size=5
 
 
 
-def train_breast_cancer_model(dataset_path=None):
+def train_breast_cancer_model(dataset_path=None, architecture='simple_cnn', epochs=30):
     """Train breast cancer model"""
     print("\n=== Training Breast Cancer Model ===")
     start_time = time.time()
@@ -130,13 +131,18 @@ def train_breast_cancer_model(dataset_path=None):
     if dataset_path is None:
         dataset_path = os.path.join('datasets', 'breast')
     
-    model = BreastCancerModel()
-    metrics = model.train_model(dataset_path)
+    # Create model instance
+    model = BreastCancerModel(dataset_path=dataset_path)
+    
+    # Prepare data and train model
+    model.prepare_data()
+    metrics = model.train_model(architecture=architecture, epochs=epochs)
     
     end_time = time.time()
     print(f"Breast Cancer Model trained in {end_time - start_time:.2f} seconds")
     print(f"Accuracy: {metrics.get('accuracy', 0):.4f}")
     print(f"Best model: {metrics.get('model_name', 'Unknown')}")
+    print(f"Model saved to: {model.model_save_path}")
     
     return metrics
 
@@ -208,6 +214,11 @@ if __name__ == "__main__":
                         help='Model to train')
     parser.add_argument('--subset', type=int, default=5000,
                         help='Subset size for image datasets (skin, brain, breast)')
+    parser.add_argument('--architecture', type=str, default='simple_cnn',
+                        choices=['simple_cnn', 'resnet50', 'efficientnet', 'mobilenet'],
+                        help='Model architecture for image models')
+    parser.add_argument('--epochs', type=int, default=30,
+                        help='Number of training epochs for image models')
     
     args = parser.parse_args()
     
@@ -223,6 +234,6 @@ if __name__ == "__main__":
         train_skin_cancer_model(subset_size=args.subset)
 
     elif args.model == 'breast':
-        train_breast_cancer_model()
+        train_breast_cancer_model(architecture=args.architecture, epochs=args.epochs)
     elif args.model == 'symptom':
         train_symptom_disease_model()
